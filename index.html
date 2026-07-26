@@ -87,12 +87,12 @@
     let codigoGenerado = "";
 
     const MEDICOS = [
-      { nombre:"Dra. Ana Torres",   esp:"Cardiología",  edad:45 },
-      { nombre:"Dr. Luis Méndez",   esp:"Pediatría",    edad:38 },
-      { nombre:"Dra. Carla Ruiz",   esp:"Dermatología", edad:41 },
-      { nombre:"Dr. Jorge Salas",   esp:"Traumatología",edad:52 },
-      { nombre:"Dra. Elena Paredes",esp:"Ginecología",  edad:47 },
-      { nombre:"Dr. Marco Díaz",    esp:"Neurología",   edad:50 },
+      { nombre:"Dra. Ana Torres",   esp:"Cardiología",  edad:45, correo:"ana.torres@clinica.com" },
+      { nombre:"Dr. Luis Méndez",   esp:"Pediatría",    edad:38, correo:"luis.mendez@clinica.com" },
+      { nombre:"Dra. Carla Ruiz",   esp:"Dermatología", edad:41, correo:"carla.ruiz@clinica.com" },
+      { nombre:"Dr. Jorge Salas",   esp:"Traumatología",edad:52, correo:"jorge.salas@clinica.com" },
+      { nombre:"Dra. Elena Paredes",esp:"Ginecología",  edad:47, correo:"elena.paredes@clinica.com" },
+      { nombre:"Dr. Marco Díaz",    esp:"Neurología",   edad:50, correo:"marco.diaz@clinica.com" },
     ];
 
     function iniciales(nombre){
@@ -138,6 +138,7 @@
           <h3>${m.nombre}</h3>
           <p class="esp">${m.esp}</p>
           <p class="dato">Edad: ${m.edad} años</p>
+          <p class="dato">✉️ ${m.correo}</p>
         </div>`).join("");
     }
 
