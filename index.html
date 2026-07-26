@@ -3,31 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Directorio Médico</title>
+  <title>Directorio Médico - Acceso Seguro</title>
   <style>
-    :root{--azul:#1e6fb8;--azul-osc:#0f4c81;--gris:#f4f6f9;--texto:#1f2a37;--borde:#d9e2ec;}
+    :root{
+      --azul:#1e6fb8; --azul-osc:#0f4c81; --gris:#f4f6f9;
+      --texto:#1f2a37; --borde:#d9e2ec; --ok:#1a9d6a; --error:#d64545;
+    }
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
-    body{background:var(--gris);color:var(--texto);min-height:100vh;padding:30px;}
-    .card{background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(15,76,129,.12);max-width:900px;margin:0 auto;padding:34px;}
-    h1{font-size:1.4rem;color:var(--azul-osc);}
+    body{background:var(--gris);color:var(--texto);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .card{background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(15,76,129,.12);width:100%;max-width:420px;padding:34px;}
+    .wide{max-width:900px;}
+    h1{font-size:1.4rem;color:var(--azul-osc);margin-bottom:6px;}
     .sub{color:#6b7683;font-size:.9rem;margin-bottom:22px;}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;}
+    label{display:block;font-size:.85rem;font-weight:600;margin:14px 0 6px;}
+    input{width:100%;padding:12px 14px;border:1px solid var(--borde);border-radius:9px;font-size:1rem;}
+    input:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(30,111,184,.15);}
+    button{width:100%;margin-top:22px;padding:13px;background:var(--azul);color:#fff;border:none;border-radius:9px;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;}
+    button:hover{background:var(--azul-osc);}
+    .msg{margin-top:14px;font-size:.85rem;padding:10px 12px;border-radius:8px;display:none;}
+    .msg.error{background:#fdeaea;color:var(--error);display:block;}
+    .msg.ok{background:#e7f6ef;color:var(--ok);display:block;}
+    .hint{font-size:.78rem;color:#8a94a1;margin-top:10px;text-align:center;}
+    .hidden{display:none;}
+    /* grid de médicos */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin-top:22px;}
     .medico{border:1px solid var(--borde);border-radius:12px;padding:18px;text-align:center;}
-    .avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 12px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;}
+    .medico .avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 12px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;}
     .medico h3{font-size:1.05rem;color:var(--azul-osc);}
-    .esp{color:var(--azul);font-size:.85rem;font-weight:600;margin:4px 0;}
-    .dato{color:#6b7683;font-size:.82rem;}
+    .medico .esp{color:var(--azul);font-size:.85rem;font-weight:600;margin:4px 0;}
+    .medico .dato{color:#6b7683;font-size:.82rem;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+    .logout{width:auto;margin:0;padding:8px 16px;font-size:.85rem;background:#eef2f7;color:var(--azul-osc);}
+    .logout:hover{background:#e0e7f0;}
+    .codebox{letter-spacing:8px;text-align:center;font-size:1.3rem;}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>👨‍⚕️ Nuestros Médicos</h1>
-    <p class="sub">Información del personal médico disponible</p>
+
+  <!-- ===================== PANTALLA 1: LOGIN ===================== -->
+  <div class="card" id="pantalla-login">
+    <h1>🔐 Acceso al Directorio Médico</h1>
+    <p class="sub">Ingrese sus credenciales para continuar</p>
+
+    <label for="usuario">Usuario</label>
+    <input type="text" id="usuario" placeholder="admin">
+
+    <label for="clave">Contraseña</label>
+    <input type="password" id="clave" placeholder="••••••••">
+
+    <button onclick="validarLogin()">Iniciar sesión</button>
+    <div class="msg" id="msg-login"></div>
+    <p class="hint">Demo — usuario: <b>admin</b> · contraseña: <b>Segura2026!</b></p>
+  </div>
+
+  <!-- ================= PANTALLA 2: CÓDIGO 2FA (móvil) ================= -->
+  <div class="card hidden" id="pantalla-codigo">
+    <h1>📱 Verificación en dos pasos</h1>
+    <p class="sub">Enviamos un código de 6 dígitos a tu teléfono móvil</p>
+
+    <label for="codigo">Código de verificación</label>
+    <input type="text" id="codigo" maxlength="6" class="codebox" placeholder="______">
+
+    <button onclick="validarCodigo()">Verificar código</button>
+    <div class="msg" id="msg-codigo"></div>
+    <p class="hint">Demo — el código enviado es: <b id="codigo-demo"></b></p>
+  </div>
+
+  <!-- ============== PANTALLA 3: INFORMACIÓN DE MÉDICOS ============== -->
+  <div class="card wide hidden" id="pantalla-medicos">
+    <div class="topbar">
+      <div>
+        <h1>👨‍⚕️ Nuestros Médicos</h1>
+        <p class="sub">Información del personal médico disponible</p>
+      </div>
+      <button class="logout" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
     <div class="grid" id="grid-medicos"></div>
   </div>
 
   <script>
-    // v1: solo se muestran los médicos (foto, nombre, especialización, edad)
+    // ---- "Base de datos" simulada ----
+    const CREDENCIALES = { usuario: "admin", clave: "Segura2026!" };
+    let codigoGenerado = "";
+
     const MEDICOS = [
       { nombre:"Dra. Ana Torres",   esp:"Cardiología",  edad:45 },
       { nombre:"Dr. Luis Méndez",   esp:"Pediatría",    edad:38 },
@@ -36,14 +94,67 @@
       { nombre:"Dra. Elena Paredes",esp:"Ginecología",  edad:47 },
       { nombre:"Dr. Marco Díaz",    esp:"Neurología",   edad:50 },
     ];
-    function iniciales(n){const p=n.replace(/^(Dra?\.)\s/,"").split(" ");return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
-    document.getElementById("grid-medicos").innerHTML = MEDICOS.map(m=>`
-      <div class="medico">
-        <div class="avatar">${iniciales(m.nombre)}</div>
-        <h3>${m.nombre}</h3>
-        <p class="esp">${m.esp}</p>
-        <p class="dato">Edad: ${m.edad} años</p>
-      </div>`).join("");
+
+    function iniciales(nombre){
+      const p = nombre.replace(/^(Dra?\.)\s/,"").split(" ");
+      return (p[0][0] + (p[1]?p[1][0]:"")).toUpperCase();
+    }
+
+    // ---- Paso 1: validar login ----
+    function validarLogin(){
+      const u = document.getElementById("usuario").value.trim();
+      const c = document.getElementById("clave").value;
+      const msg = document.getElementById("msg-login");
+      if(u === CREDENCIALES.usuario && c === CREDENCIALES.clave){
+        // genera y "envía" el código al móvil
+        codigoGenerado = String(Math.floor(100000 + Math.random()*900000));
+        document.getElementById("codigo-demo").textContent = codigoGenerado;
+        cambiarPantalla("pantalla-codigo");
+      } else {
+        msg.className = "msg error";
+        msg.textContent = "Usuario o contraseña incorrectos.";
+      }
+    }
+
+    // ---- Paso 2: validar código 2FA ----
+    function validarCodigo(){
+      const cod = document.getElementById("codigo").value.trim();
+      const msg = document.getElementById("msg-codigo");
+      if(cod === codigoGenerado){
+        pintarMedicos();
+        cambiarPantalla("pantalla-medicos");
+      } else {
+        msg.className = "msg error";
+        msg.textContent = "Código incorrecto. Verifica el mensaje de tu móvil.";
+      }
+    }
+
+    // ---- Paso 3: mostrar médicos (con correo) ----
+    function pintarMedicos(){
+      const grid = document.getElementById("grid-medicos");
+      grid.innerHTML = MEDICOS.map(m => `
+        <div class="medico">
+          <div class="avatar">${iniciales(m.nombre)}</div>
+          <h3>${m.nombre}</h3>
+          <p class="esp">${m.esp}</p>
+          <p class="dato">Edad: ${m.edad} años</p>
+        </div>`).join("");
+    }
+
+    function cerrarSesion(){
+      document.getElementById("usuario").value="";
+      document.getElementById("clave").value="";
+      document.getElementById("codigo").value="";
+      document.getElementById("msg-login").className="msg";
+      document.getElementById("msg-codigo").className="msg";
+      cambiarPantalla("pantalla-login");
+    }
+
+    function cambiarPantalla(id){
+      ["pantalla-login","pantalla-codigo","pantalla-medicos"].forEach(p =>
+        document.getElementById(p).classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
   </script>
 </body>
 </html>
