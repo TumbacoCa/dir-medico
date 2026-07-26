@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directorio Médico</title>
+  <style>
+    :root{--azul:#1e6fb8;--azul-osc:#0f4c81;--gris:#f4f6f9;--texto:#1f2a37;--borde:#d9e2ec;}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
+    body{background:var(--gris);color:var(--texto);min-height:100vh;padding:30px;}
+    .card{background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(15,76,129,.12);max-width:900px;margin:0 auto;padding:34px;}
+    h1{font-size:1.4rem;color:var(--azul-osc);}
+    .sub{color:#6b7683;font-size:.9rem;margin-bottom:22px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;}
+    .medico{border:1px solid var(--borde);border-radius:12px;padding:18px;text-align:center;}
+    .avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 12px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;}
+    .medico h3{font-size:1.05rem;color:var(--azul-osc);}
+    .esp{color:var(--azul);font-size:.85rem;font-weight:600;margin:4px 0;}
+    .dato{color:#6b7683;font-size:.82rem;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>👨‍⚕️ Nuestros Médicos</h1>
+    <p class="sub">Información del personal médico disponible</p>
+    <div class="grid" id="grid-medicos"></div>
+  </div>
+
+  <script>
+    // v1: solo se muestran los médicos (foto, nombre, especialización, edad)
+    const MEDICOS = [
+      { nombre:"Dra. Ana Torres",   esp:"Cardiología",  edad:45 },
+      { nombre:"Dr. Luis Méndez",   esp:"Pediatría",    edad:38 },
+      { nombre:"Dra. Carla Ruiz",   esp:"Dermatología", edad:41 },
+      { nombre:"Dr. Jorge Salas",   esp:"Traumatología",edad:52 },
+      { nombre:"Dra. Elena Paredes",esp:"Ginecología",  edad:47 },
+      { nombre:"Dr. Marco Díaz",    esp:"Neurología",   edad:50 },
+    ];
+    function iniciales(n){const p=n.replace(/^(Dra?\.)\s/,"").split(" ");return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
+    document.getElementById("grid-medicos").innerHTML = MEDICOS.map(m=>`
+      <div class="medico">
+        <div class="avatar">${iniciales(m.nombre)}</div>
+        <h3>${m.nombre}</h3>
+        <p class="esp">${m.esp}</p>
+        <p class="dato">Edad: ${m.edad} años</p>
+      </div>`).join("");
+  </script>
+</body>
+</html>
